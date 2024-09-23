@@ -1,4 +1,3 @@
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class GameManager {
@@ -7,7 +6,7 @@ public class GameManager {
     public void startGame(String gameType) {
         Game game;
         if (gameType.equals("TicTacToe")) {
-            game = configureTicTacToe();
+            game = TicTacToe.configureGame();
         } else if (gameType.equals("OrderAndChaos")) {
             game = new OrderAndChaos();
         } else {
@@ -16,26 +15,11 @@ public class GameManager {
 
         game.initializePlayers();
         playGame(game);
-    }
 
-    public Game configureTicTacToe() {
-        System.out.println("[+] Welcome to Tic Tac Toe!");
-        System.out.print("[+] Enter the board size (nxn): ");
-        int size = scanValidInteger();
-        //clear left over newLine
-        scanner.nextLine();
-
-        // Ask if the user wants to change the number of symbols to win
-        System.out.print("[+] Would you like to change the number of symbols in a row to win? (y/n): ");
-        String changeSymbols = scanner.nextLine();
-        int symbolsInRowToWin = 3;
-        
-        if (changeSymbols.equalsIgnoreCase("y")) {
-            System.out.print("[+] Enter the number of symbols in a row to win: ");
-            symbolsInRowToWin = scanValidInteger();
+        // After the game ends, offer the player the option to quit or play again
+        if (askToQuit()) {
+            System.exit(0);  // If the player chooses to quit, exit the loop and program
         }
-
-        return new TicTacToe(size, symbolsInRowToWin);
     }
 
     public void playGame(Game game) {
@@ -44,7 +28,7 @@ public class GameManager {
             game.getBoard().display();  // Now get the board using getBoard()
             
             System.out.println("[+] " + currentPlayer.getName() + "'s turn! Please enter a cell number: ");
-            int cellNumber = scanValidInteger();
+            int cellNumber = InputUtil.scanValidInteger();
 
             game.playTurn(cellNumber, currentPlayer);
 
@@ -52,6 +36,12 @@ public class GameManager {
                 System.out.println(currentPlayer.getName() + " wins!");
                 break;
             }
+            // If the game is TicTacToe, check if the board is full for a draw
+            if (game instanceof TicTacToe && ((TicTacToe) game).isBoardFull()) {
+                System.out.println("The game is a draw! The board is full.");
+                break;  // End the game as a draw
+            }
+
 
             game.switchTurn();
         }
@@ -59,11 +49,17 @@ public class GameManager {
 
     public void mainMenu() {
         while (true) {
+            int gamesize = 2;
+            System.out.println("----------------------------------------------------------------------------------------------------------------");
             System.out.println("Choose a game to play:");
             System.out.println("1. Tic Tac Toe");
             System.out.println("2. Order and Chaos");
-            int choice = scanValidInteger();
-
+            System.out.print("Enter number of the game to play: ");
+            int choice = InputUtil.scanValidInteger();
+            while(choice > gamesize){
+                System.out.print("[!]Invalid, Please input the correct number for game: ");
+                choice = InputUtil.scanValidInteger();
+            }
             if (choice == 1) {
                 startGame("TicTacToe");
             } else if (choice == 2) {
@@ -73,32 +69,21 @@ public class GameManager {
             }
         }
     }
-    private char scanValidChar(char[] validChars) {
-        while (true) {
-            String input = scanner.nextLine().trim(); // Trim any spaces around the input
-    
-            if (input.length() == 1) {  // Ensure the input is exactly one character long
-                char symbol = input.charAt(0);  // Get the first character
-                // Check if the input is within the valid characters (e.g., 'X' or 'O')
-                for (char validChar : validChars) {
-                    if (symbol == validChar) {
-                        return symbol;  // If valid, return the character
-                    }
-                }
-            }
-            // If input is invalid, prompt the user again
-            System.out.println("[!] Invalid input. Please enter one of the valid characters: " + new String(validChars));
+    public boolean askToQuit() {
+        System.out.println("----------------------------------------------------------------------------------------------------------------");
+        System.out.print("[+] The game is over! Would you like to play again or quit? (Type 'quit' to exit or 'play' to start a new game):");
+        String input = scanner.nextLine();
+
+        if (input.equalsIgnoreCase("quit")) {
+            System.out.println("Thanks for playing. Goodbye!");
+            System.exit(0);  // Exit the program
+            return true;  // Return true to indicate the player chose to quit
+        } else if (input.equalsIgnoreCase("play")) {
+            return false;  // Return false to indicate the player wants to play again
+        } else {
+            System.out.println("[!] Invalid input. Please type 'quit' to exit or 'play' to continue.");
+            return askToQuit();  // Recursively ask again for a valid input
         }
     }
-    private int scanValidInteger() {
-        while (true) {
-            try {
-                return scanner.nextInt();  // Try to read an integer
-            } catch (InputMismatchException e) {
-                // Handle incorrect input type and prompt user again
-                System.out.print("[!] Invalid input. Please enter a valid integer: ");
-                scanner.next();  // Clear the invalid input from the scanner
-            }
-        }
-    }
+
 }
