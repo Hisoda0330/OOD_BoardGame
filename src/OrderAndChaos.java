@@ -80,7 +80,6 @@ public class OrderAndChaos extends Game {
                 }
             }
         }
-
         return false;
     }
 
@@ -162,5 +161,9 @@ public class OrderAndChaos extends Game {
         }
 
         System.out.println("----------------------------------------------------------------------------------------------------------------");
+    }
+    @Override
+    public void printBoard() {
+        board.display();    
     }
 }

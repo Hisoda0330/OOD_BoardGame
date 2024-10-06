@@ -1,7 +1,8 @@
 public class Board {
     private int size;
     private Cell[][] cells;
-
+    private char winnerSymbol = ' ';
+    
     public Board(int size) {
         this.size = size;
         cells = new Cell[size][size];
@@ -15,7 +16,114 @@ public class Board {
             }
         }
     }
+    public boolean checkWin(char symbol) {
+        // Check rows for win
+        for (int row = 0; row < 3; row++) {
+            if (cells[row][0].getValue().equals(String.valueOf(symbol)) &&
+                cells[row][1].getValue().equals(String.valueOf(symbol)) &&
+                cells[row][2].getValue().equals(String.valueOf(symbol))) {
+                return true;
+            }
+        }
     
+        // Check columns for win
+        for (int col = 0; col < 3; col++) {
+            if (cells[0][col].getValue().equals(String.valueOf(symbol)) &&
+                cells[1][col].getValue().equals(String.valueOf(symbol)) &&
+                cells[2][col].getValue().equals(String.valueOf(symbol))) {
+                return true;
+            }
+        }
+    
+        // Check diagonals for win
+        if (cells[0][0].getValue().equals(String.valueOf(symbol)) &&
+            cells[1][1].getValue().equals(String.valueOf(symbol)) &&
+            cells[2][2].getValue().equals(String.valueOf(symbol))) {
+            return true;
+        }
+    
+        if (cells[0][2].getValue().equals(String.valueOf(symbol)) &&
+            cells[1][1].getValue().equals(String.valueOf(symbol)) &&
+            cells[2][0].getValue().equals(String.valueOf(symbol))) {
+            return true;
+        }
+    
+        return false;
+    }
+    public void printRow(int row) {
+        for (int col = 0; col < size; col++) {
+            System.out.print(cells[row][col].getValue());
+            if (col < size - 1) {
+                System.out.print(" | ");  // Separator between cells
+            }
+        }
+    }
+    
+    public char getWinnerSymbol() {
+        return winnerSymbol;
+    }
+
+    private boolean checkRowsForWin(char symbol) {
+        for (int row = 0; row < size; row++) {
+            boolean win = true;
+            for (int col = 0; col < size; col++) {
+                if (cells[row][col].getValue().charAt(0) != symbol) {
+                    win = false;
+                    break;
+                }
+            }
+            if (win) return true;
+        }
+        return false;
+    }
+    // Method to check if all cells in the board are occupied
+    public boolean isBoardFull() {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (cells[i][j].isEmpty()) {  // If any cell is empty, the board is not full
+                    return false;
+                }
+            }
+        }
+        return true;  // All cells are occupied
+    }
+
+    private boolean checkColsForWin(char symbol) {
+        for (int col = 0; col < size; col++) {
+            boolean win = true;
+            for (int row = 0; row < size; row++) {
+                if (cells[row][col].getValue().charAt(0) != symbol) {
+                    win = false;
+                    break;
+                }
+            }
+            if (win) return true;
+        }
+        return false;
+    }
+
+    private boolean checkDiagonalsForWin(char symbol) {
+        // Check top-left to bottom-right diagonal
+        boolean win = true;
+        for (int i = 0; i < size; i++) {
+            if (cells[i][i].getValue().charAt(0) != symbol) {
+                win = false;
+                break;
+            }
+        }
+        if (win) return true;
+
+        // Check top-right to bottom-left diagonal
+        win = true;
+        for (int i = 0; i < size; i++) {
+            if (cells[i][size - i - 1].getValue().charAt(0) != symbol) {
+                win = false;
+                break;
+            }
+        }
+        return win;
+    }
+
     public int getSize() {
         return size;
     }
@@ -56,4 +164,5 @@ public class Board {
         }
         System.out.println(borderLine);
     }
+    
 }

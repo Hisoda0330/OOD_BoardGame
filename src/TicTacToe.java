@@ -171,4 +171,8 @@ public class TicTacToe extends Game {
             }
         }
     }
+    @Override
+    public void printBoard() {
+        board.display(); 
+    } 
 }

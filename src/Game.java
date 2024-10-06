@@ -42,6 +42,8 @@ public abstract class Game {
     // Abstract method to initialize players (must be implemented by subclasses)
     public abstract void initializePlayers(); 
 
+    public abstract void printBoard();
+
     // Abstract method that must be implemented in TicTacToe and other games
     //public abstract boolean checkWin(Player player);
 }

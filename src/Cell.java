@@ -16,6 +16,9 @@ public class Cell {
     public boolean isEmpty() {
         return isNumber();  // A cell is empty if it still contains its original number
     }
+    public boolean isSuperEmpty() {
+        return value.equals(" ");  // Empty cell is represented by a single space
+    }
 
     public boolean isOccupied() {
         try {

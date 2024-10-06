@@ -16,6 +16,18 @@ public class InputUtil {
             }
         }
     }
+    
+    public static int scanValidSymbol() {
+        while (true) {
+            try {
+                return scanner.nextInt();  // Try to read an integer
+            } catch (InputMismatchException e) {
+                // Handle incorrect input type and prompt user again
+                System.out.print("[!] * is for draw. Please choose another Symbol: ");
+                scanner.next();  // Clear the invalid input from the scanner
+            }
+        }
+    }
     // Method to ensure the player chooses a unique symbol
     public static char scanUniqueSymbol(Set<Character> chosenSymbols) {
         char playerSymbol;
