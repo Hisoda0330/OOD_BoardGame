@@ -5,9 +5,11 @@ public abstract class Game {
     protected Board board;
     protected List<Player> players;
     protected int currentTurn;
-
+    private int size;
+    
     public Game(int boardSize) {
-        board = new Board(boardSize);
+        size = boardSize;
+        this.board = new Board(boardSize);
         players = new ArrayList<>();
         currentTurn = 0;
     }
@@ -26,6 +28,9 @@ public abstract class Game {
 
     public Board getBoard() {  
         return board;
+    }
+    public int getBoardSize() {
+        return size;
     }
 
     // Abstract method to check if a player has won (must be implemented by subclasses)

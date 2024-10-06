@@ -4,10 +4,11 @@ import java.util.Scanner;
 public class TicTacToe extends Game {
     private int symbolsInRowToWin;
     private Scanner scanner = new Scanner(System.in);  // Scanner to take input
-
+    public int size = 0;
     public TicTacToe(int boardSize, int symbolsInRowToWin) {
         super(boardSize);
         this.symbolsInRowToWin = symbolsInRowToWin;
+        size = boardSize;
     }
     public static TicTacToe configureGame() {
         Scanner scanner = new Scanner(System.in);
@@ -19,20 +20,26 @@ public class TicTacToe extends Game {
         int size = InputUtil.scanValidInteger();
 
         // Ask if the user wants to change the number of symbols to win
-        System.out.print("[+] Would you like to change the number of symbols in a row to win? (y/n): ");
-        String changeSymbols = scanner.nextLine();
+        System.out.print("[+] Would you like to change the number of connects to win? (y/n): ");
+        String changeSymbols = InputUtil.getYesOrNoInput();  // Validate 'y' or 'n' input
         int symbolsInRowToWin = 3;
         
-        if (changeSymbols.equalsIgnoreCase("y")) {
-            System.out.print("[+] Enter the number of symbols in a row to win: ");
-            symbolsInRowToWin = InputUtil.scanValidInteger();
+        if (changeSymbols.equals("y")) {
+            while(true){
+                System.out.print("[+] Enter the number of symbols in a row to win: ");
+                symbolsInRowToWin = InputUtil.scanValidInteger();
+                if (symbolsInRowToWin > size) {
+                    System.out.println("[!] The number of connections to win cannot be greater than the board size " + size);
+                } else if (symbolsInRowToWin <= 0) {
+                    System.out.println("[!] The number of symbols in a row to win must be greater than 0.");
+                } else {
+                    break;  // Valid input, exit the loop
+                }
+            }
         }
 
         return new TicTacToe(size, symbolsInRowToWin);
-
-        
     }
-
 
     // Check all rows, columns, and diagonals for the winning condition based on the current player's symbol
     @Override
@@ -128,10 +135,16 @@ public class TicTacToe extends Game {
 
     @Override
     public void playTurn(int cellNumber, Player player) {
-        if (board.isValidMove(cellNumber)) {
-            board.updateCell(cellNumber, player.getSymbol());
-        } else {
-            throw new IllegalArgumentException("Invalid move! Try again.");
+        //cellNumber = InputUtil.getValidCellNumber();
+
+        while(true){
+            if (board.isValidMove(cellNumber)) {
+                board.updateCell(cellNumber, player.getSymbol());  // Place the chosen symbol on the board
+                break;
+            } else {
+                System.out.print("Cell Occupied! Try again with another cell: ");
+                cellNumber=scanner.nextInt();
+            }
         }
     }
 
@@ -158,6 +171,4 @@ public class TicTacToe extends Game {
             }
         }
     }
-
-
 }

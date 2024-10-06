@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class GameManager {
+public class GameManager{
     private Scanner scanner = new Scanner(System.in);
 
     public void startGame(String gameType) {
@@ -26,9 +26,9 @@ public class GameManager {
         while (true) {
             Player currentPlayer = game.getCurrentPlayer();
             game.getBoard().display();  // Now get the board using getBoard()
-            
+            int boardsize = game.getBoardSize();
             System.out.println("[+] " + currentPlayer.getName() + "'s turn! Please enter a cell number: ");
-            int cellNumber = InputUtil.scanValidInteger();
+            int cellNumber = InputUtil.getValidCellNumber(boardsize);
 
             game.playTurn(cellNumber, currentPlayer);
 

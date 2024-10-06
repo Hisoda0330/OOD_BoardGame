@@ -2,6 +2,7 @@ import java.util.Scanner;
 
 public class OrderAndChaos extends Game {
     private Scanner scanner = new Scanner(System.in);
+    private String[] roles = new String[2];  // To store roles for both players
 
     public OrderAndChaos() {
         super(6);  // Fixed size 6x6 for Order and Chaos
@@ -10,7 +11,7 @@ public class OrderAndChaos extends Game {
     @Override
     public boolean checkWin(Player player) {
         // Check if the Order player forms a line of five consecutive X's or O's
-        if (checkRowsForWin(player) || checkColsForWin(player) || checkDiagonalsForWin(player)) {
+        if (checkRowsForWin() || checkColsForWin() || checkDiagonalsForWin()) {
             System.out.println("Order wins!");
             return true;
         }
@@ -37,10 +38,10 @@ public class OrderAndChaos extends Game {
     }
     
     // Check each row for a winning condition (five consecutive symbols)
-    private boolean checkRowsForWin(Player player) {
+    private boolean checkRowsForWin() {
         for (int row = 0; row < board.getSize(); row++) {
             for (int col = 0; col <= board.getSize() - 5; col++) {
-                if (isConsecutive(row, col, 0, 1, player)) {  // Check across the row
+                if (isConsecutive(row, col, 0, 1)) {  // Check across the row
                     return true;
                 }
             }
@@ -49,10 +50,10 @@ public class OrderAndChaos extends Game {
     }
 
     // Check each column for a winning condition (five consecutive symbols)
-    private boolean checkColsForWin(Player player) {
+    private boolean checkColsForWin() {
         for (int col = 0; col < board.getSize(); col++) {
             for (int row = 0; row <= board.getSize() - 5; row++) {
-                if (isConsecutive(row, col, 1, 0, player)) {  // Check down the column
+                if (isConsecutive(row, col, 1, 0)) {  // Check down the column
                     return true;
                 }
             }
@@ -61,11 +62,11 @@ public class OrderAndChaos extends Game {
     }
 
     // Check both diagonals for a winning condition (five consecutive symbols)
-    private boolean checkDiagonalsForWin(Player player) {
+    private boolean checkDiagonalsForWin() {
         // Check top-left to bottom-right diagonal
         for (int row = 0; row <= board.getSize() - 5; row++) {
             for (int col = 0; col <= board.getSize() - 5; col++) {
-                if (isConsecutive(row, col, 1, 1, player)) {  // Check diagonal
+                if (isConsecutive(row, col, 1, 1)) {  // Check diagonal
                     return true;
                 }
             }
@@ -74,7 +75,7 @@ public class OrderAndChaos extends Game {
         // Check top-right to bottom-left diagonal
         for (int row = 0; row <= board.getSize() - 5; row++) {
             for (int col = 4; col < board.getSize(); col++) {
-                if (isConsecutive(row, col, 1, -1, player)) {  // Check diagonal
+                if (isConsecutive(row, col, 1, -1)) {  // Check diagonal
                     return true;
                 }
             }
@@ -84,19 +85,18 @@ public class OrderAndChaos extends Game {
     }
 
     // Helper method to check if there are five consecutive symbols
-    private boolean isConsecutive(int row, int col, int rowStep, int colStep, Player player) {
-        char playerSymbol = player.getSymbol();
+    private boolean isConsecutive(int row, int col, int rowStep, int colStep) {
         String firstSymbol = board.getCell(row, col).getValue();
 
-        // Ensure the first cell contains the player's symbol
-        if (firstSymbol.equals(String.valueOf(playerSymbol))) {
+        // Ensure the first cell is not empty
+        if (!firstSymbol.equals("")) {
             for (int i = 1; i < 5; i++) {
                 int newRow = row + i * rowStep;
                 int newCol = col + i * colStep;
                 String nextSymbol = board.getCell(newRow, newCol).getValue();
 
                 if (!firstSymbol.equals(nextSymbol)) {
-                    return false;  // If any symbol doesn't match, return false
+                    return false;  // If any symbol doesn’t match, return false
                 }
             }
             return true;  // All five symbols match
@@ -107,10 +107,16 @@ public class OrderAndChaos extends Game {
 
     @Override
     public void playTurn(int cellNumber, Player player) {
-        if (board.isValidMove(cellNumber)) {
-            board.updateCell(cellNumber, player.getSymbol());
-        } else {
-            throw new IllegalArgumentException("Invalid move! Try again.");
+        // Get validated symbol input from InputUtil
+        char symbol = InputUtil.getOCValidSymbol();
+        while(true){
+            if (board.isValidMove(cellNumber)) {
+                board.updateCell(cellNumber, symbol);  // Place the chosen symbol on the board
+                break;
+            } else {
+                System.out.print("Cell Occupied! Try again with another cell: ");
+                cellNumber=scanner.nextInt();
+            }
         }
     }
 
@@ -120,19 +126,41 @@ public class OrderAndChaos extends Game {
         System.out.println("[+] Welcome to Order and Chaos");
         System.out.println();
         System.out.println("Reminder: The board size is 6x6 for Order and Chaos");
-        System.out.println("Player 1 wins by connecting 5 ('Order') and Player 2 wins by the board is full without 5 or more connections!");
+        System.out.println("Player 1 wins by connecting 5 (Order) and Player 2 wins if no 5 or more connections are made (Chaos)!");
         System.out.println();
-        System.out.print("[+] Enter the number of players for Order and Chaos: ");
-        int numberOfPlayers = InputUtil.scanValidInteger();
 
-        for (int i = 0; i < numberOfPlayers; i++) {
-            System.out.print("[+] Player " + (i + 1) + " please enter your name: ");
+        for (int i = 0; i < 2; i++) {
+            System.out.print("[+] Player " + (i + 1) + ", please enter your name: ");
             String playerName = scanner.nextLine();
 
-            System.out.print("[+] Player " + (i + 1) + " please enter your symbol (X or O): ");
-            char playerSymbol = scanner.nextLine().charAt(0);
+            // If it's the first player, ask for the role
+            if (i == 0) {
+                while (true) {
+                    System.out.print("[+] Player 1, please choose your role (Order/Chaos): ");
+                    roles[i] = scanner.nextLine().trim();
 
-            addPlayer(new Player(playerName, playerSymbol, "Order and Chaos"));
+                    if (roles[i].equalsIgnoreCase("Order") || roles[i].equalsIgnoreCase("Chaos")) {
+                        roles[i] = roles[i].substring(0, 1).toUpperCase() + roles[i].substring(1).toLowerCase();  // Capitalize the role properly
+                        break;  // Valid role chosen
+                    } else {
+                        System.out.println("[!] Invalid input. Please enter either 'Order' or 'Chaos'.");
+                    }
+                }
+            } else {
+                // Automatically assign the opposite role to the second player
+                roles[i] = roles[0].equals("Order") ? "Chaos" : "Order";
+            }
+
+            // Create the player using the simplified constructor
+            Player player = new Player(playerName, roles[i]);
+
+            // Add the player to the game
+            addPlayer(player);
+
+            // Output reminder of the player's role
+            System.out.println("[+] Player " + (i + 1) + ": " + playerName + " is " + roles[i]);
         }
+
+        System.out.println("----------------------------------------------------------------------------------------------------------------");
     }
 }
