@@ -63,19 +63,6 @@ public class Board {
         return winnerSymbol;
     }
 
-    private boolean checkRowsForWin(char symbol) {
-        for (int row = 0; row < size; row++) {
-            boolean win = true;
-            for (int col = 0; col < size; col++) {
-                if (cells[row][col].getValue().charAt(0) != symbol) {
-                    win = false;
-                    break;
-                }
-            }
-            if (win) return true;
-        }
-        return false;
-    }
     // Method to check if all cells in the board are occupied
     public boolean isBoardFull() {
         for (int i = 0; i < size; i++) {
@@ -86,42 +73,6 @@ public class Board {
             }
         }
         return true;  // All cells are occupied
-    }
-
-    private boolean checkColsForWin(char symbol) {
-        for (int col = 0; col < size; col++) {
-            boolean win = true;
-            for (int row = 0; row < size; row++) {
-                if (cells[row][col].getValue().charAt(0) != symbol) {
-                    win = false;
-                    break;
-                }
-            }
-            if (win) return true;
-        }
-        return false;
-    }
-
-    private boolean checkDiagonalsForWin(char symbol) {
-        // Check top-left to bottom-right diagonal
-        boolean win = true;
-        for (int i = 0; i < size; i++) {
-            if (cells[i][i].getValue().charAt(0) != symbol) {
-                win = false;
-                break;
-            }
-        }
-        if (win) return true;
-
-        // Check top-right to bottom-left diagonal
-        win = true;
-        for (int i = 0; i < size; i++) {
-            if (cells[i][size - i - 1].getValue().charAt(0) != symbol) {
-                win = false;
-                break;
-            }
-        }
-        return win;
     }
 
     public int getSize() {

@@ -44,7 +44,7 @@ public class InputUtil {
         }
         return playerSymbol;
     }
-        // Method to handle symbol input validation
+     // Method to handle symbol input validation
     public static char getOCValidSymbol() {
         if (scanner.hasNextLine()) {
             scanner.nextLine();  // Clear the buffer to avoid immediate invalid input
@@ -60,7 +60,7 @@ public class InputUtil {
             }
         }
     }
-    
+
     public static String getYesOrNoInput() {
         if (scanner.hasNextLine()) {
             scanner.nextLine();  // Clear the buffer to avoid immediate invalid input
