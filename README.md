@@ -1,5 +1,4 @@
-# CS611-Assignment < 2 >
-## < Object-Oriented Board Game >
+## < Object-Oriented Board Game:TIC-TIC-TOE & ORDER OF CHAOS >
 ---------------------------------------------------------------------------
 - Name: Jinpeng Huang
 - Email: Jinpeng@bu.edu
